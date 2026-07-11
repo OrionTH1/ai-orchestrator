@@ -51,7 +51,7 @@ Aqui a spec **paga por si mesma imediatamente**, porque ela é infraestrutura:
 
 Você não escreve a spec porque um metodologista mandou. Você escreve porque sem ela o produto não sabe como te ajudar.
 
-Esse acoplamento é o diferencial: um concorrente não copia o botão Validar sem antes construir o funil de spec inteiro.
+O funil de specs, sozinho, não é diferencial — vários já o têm (seção 8). O diferencial é o **acoplamento**: a spec e a validação partilharem o mesmo modelo de dados, de modo que o critério de aceite escrito no PRD seja literalmente o item que você clica na tela de teste. É essa costura que não existe em lugar nenhum, e é ela que não se obtém somando ferramentas.
 
 ## 4. Público-alvo
 
@@ -145,20 +145,34 @@ O que resta, e resta inteiro:
 
 O diferencial deste produto é, portanto, apenas: **o loop de validação humana** e a **gestão visual de Tasks paralelas**. O funil de specs entra como infraestrutura necessária, não como argumento de venda.
 
-## 9. Não-objetivos
+## 9. Por que construir, se cada parte já existe
+
+Toda peça deste produto existe em algum lugar. O Vibe Kanban tem diff e board. O Compozy tem o funil de specs inteiro, mais maduro do que este projeto jamais será no primeiro ano. O Spec Kit tem SDD consolidado, com 29 integrações e uma comunidade.
+
+A resposta não é "faremos melhor". É outra:
+
+**Essas ferramentas não compartilham um modelo de dados.** O spec do Spec Kit não sabe o que é uma worktree do Vibe Kanban. O critério de aceite do PRD do Compozy não tem como virar um checklist ao lado de um preview — porque o Compozy não tem preview e o Vibe Kanban não tem critério de aceite.
+
+Por isso "usar os quatro juntos" não é uma alternativa a este produto. Não é uma questão de conveniência — é que **o valor está justamente na informação que atravessa a fronteira entre eles, e essa informação morre na fronteira.** A costura não é integrável por fora; ela tem que ser nativa.
+
+E a postura: isto é um desenvolvedor resolvendo um problema seu e publicando o resultado — não um empreendedor disputando mercado. **O sucesso do projeto é consequência, não objetivo.** Isso é uma restrição de projeto, não uma desculpa: significa que o produto pode ser opinativo, esquisito e otimizado para uma pessoa só, sem dever satisfação a ninguém.
+
+**Decisão:** o funil de specs será construído do zero, e não sobre o Compozy. Custa a maior parte do tempo e não é o diferencial — mas aprender construindo é um objetivo declarado, e a independência de roadmap de terceiros vale o preço. Esta decisão foi tomada com o custo na mesa, não por desconhecê-lo.
+
+## 10. Não-objetivos
 
 - Gerar um app inteiro a partir de um prompt.
 - Substituir o editor de código.
 - Colaboração em tempo real, contas, nuvem, servidor.
 - Ser agnóstico a tudo desde o dia 1 (múltiplos agentes, múltiplas linguagens, múltiplos frameworks).
 
-## 10. Limitações conhecidas
+## 11. Limitações conhecidas
 
 - **Detecção do dev server.** Em um repo Next.js é `npm run dev`. Num monorepo com front, back e docker-compose, não é óbvio. Vai exigir heurística + um arquivo de config de escape para quando ela errar.
 - **Repo vazio.** Na primeira Task de um projeto zerado não existe dev server. O botão Validar só nasce depois da primeira implementação.
 - **Duplicação entre Tasks.** Tasks paralelas vivem em branches diferentes e não enxergam o código uma da outra até o merge. Duas Tasks podem escrever a mesma função sem saber. É o preço do isolamento; não há solução barata.
 
-## 11. Modelo de negócio
+## 12. Modelo de negócio
 
 Open source. Sem plano de monetização. No máximo, doações.
 O projeto nasce como ferramenta pessoal; a abertura é princípio, não estratégia de captura.
