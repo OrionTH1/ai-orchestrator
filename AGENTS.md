@@ -12,13 +12,28 @@ Stack, padrões e estrutura do projeto.
 
 | Camada | Escolha | Por quê |
 |---|---|---|
-| Shell desktop | **Electron** | Carrega Chromium. O painel de Validar renderiza *a aplicação que o usuário está validando* — se o motor de renderização não for o mesmo do alvo real, o checklist valida contra o renderizador errado. Tauri usaria WebKitGTK no Linux, WKWebView no macOS e Chromium no Windows: três motores, três resultados. |
+| Shell desktop | **Electron** | Ver "O preview do Validar" abaixo. |
 | Linguagem | **TypeScript** (main + renderer) | O executor inteiro é `child_process.spawn`. Uma linguagem só no processo todo. |
 | UI | **React** | |
 | Estado de runtime | **SQLite** (local, fora do repo do usuário) | Tasks, steps, sessões de agente, rodadas, portas alocadas, resultados de checklist. Efêmero e nosso. |
 | Estado de spec | **Markdown commitado no repo do usuário** | PRD, Techspec, decomposição e memória de projeto são patrimônio do projeto, não do app. Ver CONTEXT §5. |
 | Isolamento | **git worktree** por Task | Ver CONTEXT §5. |
 | Execução de agentes | **CLI headless como subprocesso** | Ver abaixo. |
+
+## O preview do Validar
+
+**O preview é embutido no app** (`BrowserView`/`<webview>`), lado a lado com o checklist de critérios de aceite. Não abrimos o navegador externo do usuário.
+
+Essa é uma decisão de **produto**, não de conveniência: a tese é "toda a orquestração e a validação num só lugar". Mandar o usuário para outra janela quebra a promessa justamente no último metro — que é o mesmo furo que a revisão de código no GitHub abria, e que o diff viewer embutido existe para fechar.
+
+Isso **decide o shell**. Com o preview embutido, o motor de renderização da webview passa a ser o motor contra o qual o usuário valida:
+
+- **Electron** empacota **Chromium**, em todas as plataformas — o mesmo motor da maioria dos alvos reais.
+- **Tauri** usaria a webview do sistema: **WebKitGTK** no Linux, **WKWebView** no macOS, **Chromium** no Windows. Três motores, três resultados. Pior: WebKitGTK não é o Safari — você caçaria bugs de renderização de um motor que *nenhum usuário final usa*. Ruído, não sinal.
+
+Por isso Electron. O bônus é que o executor inteiro (`child_process.spawn`) e a UI ficam na mesma linguagem.
+
+**Limitação assumida:** a validação é **single-engine (Chromium)**. Um bug que só aparece no Firefox ou no Safari não aparece no checklist. Validação cross-browser — rodar o mesmo roteiro de aceite em múltiplos motores reais — é uma feature deliberada de v2, não algo que se ganha por acidente escolhendo outra webview.
 
 ## Execução de agentes
 

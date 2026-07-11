@@ -85,7 +85,8 @@ Substitui o PRD escrito à mão.
 | **Agentes se interrogando entre steps** (o Techspec perguntando ao PRD) | Ideia original e boa, mas passar os documentos anteriores como contexto resolve a maior parte do problema. |
 | **Paralelismo dentro de uma Task** | Agentes compartilham o filesystem do worktree e se atropelariam. Exigiria declaração de posse de arquivos por mini-task. |
 | **Abrir PR / integração com GitHub** | Já funciona na mão hoje. |
-| **Multi-modelo** (Codex, Gemini, Cursor) | Começar com um agente só. |
+| **Multi-modelo** (Codex, Gemini, Cursor) | Começar com um agente só. O contrato de execução já prevê isso: adicionar um agente é escrever um adaptador, não um SDK (ver `AGENTS.md`). |
+| **Validação cross-browser** | O preview embutido roda em Chromium. Rodar o mesmo roteiro de aceite em Firefox e WebKit reais é uma feature legítima — e deliberada, não um acidente de escolha de webview. |
 
 ## Fora de escopo (não é "v2", é "não")
 

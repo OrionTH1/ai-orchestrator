@@ -171,6 +171,7 @@ E a postura: isto é um desenvolvedor resolvendo um problema seu e publicando o 
 - **Detecção do dev server.** Em um repo Next.js é `npm run dev`. Num monorepo com front, back e docker-compose, não é óbvio. Vai exigir heurística + um arquivo de config de escape para quando ela errar.
 - **Repo vazio.** Na primeira Task de um projeto zerado não existe dev server. O botão Validar só nasce depois da primeira implementação.
 - **Duplicação entre Tasks.** Tasks paralelas vivem em branches diferentes e não enxergam o código uma da outra até o merge. Duas Tasks podem escrever a mesma função sem saber. É o preço do isolamento; não há solução barata.
+- **Validação single-engine.** O preview do Validar é embutido no app e roda em Chromium. Um bug que só aparece no Firefox ou no Safari não aparece no checklist. É o preço de manter tudo num só lugar. Validação cross-browser fica para a v2.
 
 ## 12. Modelo de negócio
 
