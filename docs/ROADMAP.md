@@ -80,12 +80,20 @@ Agora sim, na ordem do pipeline.
 
 Tudo que veio antes existe para alimentar esta fase.
 
-- **Validar comportamento**: subir o dev server na porta da Task, esperar responder, renderizar no preview embutido.
-- **Checklist de aceite**: os critérios do PRD como roteiro clicável; usuário marca passou/falhou.
-- **Validar código**: diff viewer com comentários inline.
-- **Triagem**: agente propõe a categoria (defeito / qualidade / escopo / técnico), usuário confirma.
-- **O loop**: feedback sobe até o step certo e desce de novo. Agora os quatro destinos existem.
+- **Subir o dev server** na porta alocada da Task e esperar a porta responder.
+- **Abrir o navegador padrão do usuário** (`shell.openExternal`). Sem preview embutido na v1 — ver "O que fica de fora e por quê", abaixo.
+- **Checklist de aceite**: os critérios do PRD como roteiro clicável, num painel do app; usuário marca passou/falhou.
+- **Triagem**: agente propõe a categoria (defeito / qualidade / escopo / técnico), **usuário confirma**.
+- **O loop**: o feedback sobe até o step certo e desce de novo. Agora os quatro destinos existem — defeito e qualidade voltam para a Implementação, escopo reabre o **PRD**, técnico reabre o **Techspec**.
 - Contador de **rodadas**.
+
+### O que fica de fora, e por quê
+
+O **preview embutido** e o **diff viewer com comentários inline** vão para a v2. Eles são a **embalagem** do Validar, não o motor.
+
+O que **não** sai: o **checklist de aceite**, a **triagem** e o **roteamento**. Sem o checklist, ninguém lê os critérios de aceite do PRD — e escrever spec volta a ser cerimônia, que é exatamente o modo de falha que CONTEXT §3 existe para evitar. Cortar isso não seria um corte de escopo; seria construir outro produto.
+
+Na prática, na v1: você testa no seu navegador de verdade e revisa o código no GitHub, como já faz hoje. **Bônus:** validar no navegador real elimina a limitação de single-engine que o preview embutido traria.
 
 **Critério de sucesso do MVP:** rodar um entregável real de ponta a ponta e sentir que foi melhor do que fazer na mão.
 
@@ -99,9 +107,11 @@ Tudo que veio antes existe para alimentar esta fase.
 | **Memória de projeto (camada 2: registro de decisões)** | Ao fim de cada Task, um arquivo curto por decisão: o que foi decidido, alternativas rejeitadas, e **por quê** (*"por que SQS e não RabbitMQ?"*). Agentes leem só o **índice**; puxam o corpo sob demanda. Exige mecanismo de retrieval de verdade, e só depois de várias Tasks reais dá para saber o que vale registrar. |
 | **Agentes se interrogando entre steps** (o Techspec perguntando ao PRD) | Ideia original e boa, mas passar os documentos anteriores como contexto resolve a maior parte do problema. |
 | **Paralelismo dentro de uma Task** | Agentes compartilham o filesystem do worktree e se atropelariam. Exigiria declaração de posse de arquivos por mini-task. |
+| **Preview embutido** (`BrowserView`) | Na v1 o Validar abre o navegador padrão. Embutir traz o "tudo numa janela só" — e traz junto a limitação de validar contra um motor só (Chromium). É melhoria de conforto, não de tese. |
+| **Diff viewer com comentários inline** | Revisar no GitHub já funciona hoje e não dói o suficiente para adiar o MVP. É *table stakes* (Vibe Kanban e Conductor têm), não diferencial — não ter é um furo, mas não é o que faz o produto existir. |
+| **Validação cross-browser** | Rodar o mesmo roteiro de aceite em Firefox e WebKit reais, de forma dirigida. Só faz sentido depois que o preview embutido existir. |
 | **Abrir PR / integração com GitHub** | Já funciona na mão hoje. |
 | **Multi-modelo** (Codex, Gemini, Cursor) | Começar com um agente só. O contrato de execução já prevê isso: adicionar um agente é escrever um adaptador, não um SDK (ver `AGENTS.md`). |
-| **Validação cross-browser** | O preview embutido roda em Chromium. Rodar o mesmo roteiro de aceite em Firefox e WebKit reais é uma feature legítima — e deliberada, não um acidente de escolha de webview. |
 
 ## Fora de escopo (não é "v2", é "não")
 

@@ -36,8 +36,9 @@ Um clique em **New Task** cria o worktree, configura o projeto, instala dependê
 Um painel com todas as Tasks em paralelo: em que step cada uma está, quantas mini-tasks faltam, o que terminou — e, sobretudo, **o que está travado esperando uma resposta sua**. Essa é a informação que seis terminais abertos nunca te deram.
 
 ### Validar
-Um clique em **Validar** sobe os dev servers daquela Task numa porta própria, abre o navegador, e te entrega **o roteiro de teste derivado dos critérios de aceite do PRD** — não inventado na hora. Ao lado, o diff do código, comentável inline.
-O que falhar vira **feedback estruturado** que volta para o agente com o contrato violado junto.
+Um clique em **Validar** sobe os dev servers daquela Task numa porta própria, abre o navegador, e te entrega **o roteiro de teste derivado dos critérios de aceite do PRD** — não inventado na hora.
+
+Você clica pelos itens e marca o que passou. **O que falhar vira feedback estruturado** que volta para o agente com o contrato violado junto — não "tá bugado", mas *"critério AC-04 falhou: lista vazia mostra tela branca"*.
 
 ## 3. A tese
 
@@ -171,7 +172,7 @@ E a postura: isto é um desenvolvedor resolvendo um problema seu e publicando o 
 - **Detecção do dev server.** Em um repo Next.js é `npm run dev`. Num monorepo com front, back e docker-compose, não é óbvio. Vai exigir heurística + um arquivo de config de escape para quando ela errar.
 - **Repo vazio.** Na primeira Task de um projeto zerado não existe dev server. O botão Validar só nasce depois da primeira implementação.
 - **Duplicação entre Tasks.** Tasks paralelas vivem em branches diferentes e não enxergam o código uma da outra até o merge. Duas Tasks podem escrever a mesma função sem saber. É o preço do isolamento; não há solução barata.
-- **Validação single-engine.** O preview do Validar é embutido no app e roda em Chromium. Um bug que só aparece no Firefox ou no Safari não aparece no checklist. É o preço de manter tudo num só lugar. Validação cross-browser fica para a v2.
+- **A validação não é totalmente "num só lugar" na v1.** O preview abre no navegador padrão do usuário, e a revisão de código continua no GitHub. Preview embutido e diff viewer com comentários inline ficam para a v2. O **checklist de aceite, a triagem e o roteamento do feedback** — o motor do Validar — estão na v1.
 
 ## 12. Modelo de negócio
 

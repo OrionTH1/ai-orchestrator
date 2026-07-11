@@ -12,7 +12,7 @@ Stack, padrões e estrutura do projeto.
 
 | Camada | Escolha | Por quê |
 |---|---|---|
-| Shell desktop | **Electron** | Ver "O preview do Validar" abaixo. |
+| Shell desktop | **Electron** | Executor e UI na mesma linguagem (o executor é `child_process.spawn`). E o preview embutido volta na v2 — ver abaixo. |
 | Linguagem | **TypeScript** (main + renderer) | O executor inteiro é `child_process.spawn`. Uma linguagem só no processo todo. |
 | UI | **React** | |
 | Estado de runtime | **SQLite** (local, fora do repo do usuário) | Tasks, steps, sessões de agente, rodadas, portas alocadas, resultados de checklist. Efêmero e nosso. |
@@ -22,18 +22,20 @@ Stack, padrões e estrutura do projeto.
 
 ## O preview do Validar
 
-**O preview é embutido no app** (`BrowserView`/`<webview>`), lado a lado com o checklist de critérios de aceite. Não abrimos o navegador externo do usuário.
+**Na v1, o preview é o navegador padrão do usuário** (`shell.openExternal`). O app sobe o dev server na porta da Task, espera responder, e abre o navegador. O **checklist de critérios de aceite fica num painel do app**, onde o usuário marca passou/falhou.
 
-Essa é uma decisão de **produto**, não de conveniência: a tese é "toda a orquestração e a validação num só lugar". Mandar o usuário para outra janela quebra a promessa justamente no último metro — que é o mesmo furo que a revisão de código no GitHub abria, e que o diff viewer embutido existe para fechar.
+O que se ganha com isso, além da economia: o usuário valida **no navegador real dele**, com o DevTools dele e o motor que os usuários finais dele de fato usam. Não há limitação de single-engine.
 
-Isso **decide o shell**. Com o preview embutido, o motor de renderização da webview passa a ser o motor contra o qual o usuário valida:
+O que se perde: o "tudo numa janela só". É uma concessão consciente — a dor de alternar de janela é pequena perto de adiar o produto em um mês.
 
-- **Electron** empacota **Chromium**, em todas as plataformas — o mesmo motor da maioria dos alvos reais.
-- **Tauri** usaria a webview do sistema: **WebKitGTK** no Linux, **WKWebView** no macOS, **Chromium** no Windows. Três motores, três resultados. Pior: WebKitGTK não é o Safari — você caçaria bugs de renderização de um motor que *nenhum usuário final usa*. Ruído, não sinal.
+**Na v2, o preview passa a ser embutido** (`BrowserView`). Aí o motor de renderização da webview vira o motor contra o qual o usuário valida, e isso **decide o shell**:
 
-Por isso Electron. O bônus é que o executor inteiro (`child_process.spawn`) e a UI ficam na mesma linguagem.
+- **Electron** empacota **Chromium** em todas as plataformas — o mesmo motor da maioria dos alvos reais.
+- **Tauri** usaria a webview do sistema: **WebKitGTK** no Linux, **WKWebView** no macOS, **Chromium** no Windows. Três motores, três resultados. Pior: WebKitGTK não é o Safari — você caçaria bugs de um motor que *nenhum usuário final usa*. Ruído, não sinal.
 
-**Limitação assumida:** a validação é **single-engine (Chromium)**. Um bug que só aparece no Firefox ou no Safari não aparece no checklist. Validação cross-browser — rodar o mesmo roteiro de aceite em múltiplos motores reais — é uma feature deliberada de v2, não algo que se ganha por acidente escolhendo outra webview.
+Por isso o shell é Electron desde a v1, mesmo que o preview embutido só chegue depois. Trocar de shell no meio do caminho seria caro; o executor em TypeScript já justifica a escolha sozinho.
+
+**O que não sai da v1:** o **checklist de aceite**, a **triagem** e o **roteamento do feedback**. Eles são o motor do Validar — o preview e o diff viewer são a embalagem. Sem o checklist, os critérios de aceite do PRD não têm quem os leia, e a spec volta a ser cerimônia — que é exatamente o que CONTEXT §3 diz que faz o SDD falhar.
 
 ## Execução de agentes
 
@@ -115,7 +117,7 @@ A CLI é resolvida pelo `PATH` do sistema. Um **guard de versão** avisa quando 
 ```
 src/
   main/               # processo principal do Electron
-  renderer/           # React — painel, Validar, diff viewer
+  renderer/           # React — painel, steps, checklist de aceite
   executor/
     contract.ts       # AgentEvent, AgentRun, AgentExecutor
     channel.ts        # fila async → AsyncIterable (ponte callback → for await)
