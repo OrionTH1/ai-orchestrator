@@ -1,0 +1,12 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": ["src/tests/**/*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node", "@testing-library/jest-dom"],
+    "paths": {
+      "@renderer/*": ["./src/renderer/src/*"],
+      "@shared/*": ["./src/shared/*"]
+    }
+  }
+}

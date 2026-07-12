@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+*.local
+*.tsbuildinfo
+electron.vite.config.js
+electron.vite.config.d.ts
+
+tasks/
